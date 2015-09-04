@@ -1,0 +1,272 @@
+
+</script>
+
+<link rel="import" href="componentss/bower_components/core-ajax/core-ajax.html"> <link rel="stylesheet" type="text/css" href="">
+
+<link rel="import" href="componentss/bower_components/paper-button/paper-button.html">
+<link href="../css/jquery-ui.css" rel="stylesheet">
+<polymer-element name="q-wanstatus" attributes="ports">
+    <template>
+        <core-ajax id='ajax' url="" handleAs="json" response="{{headerList}}" on-core-response="{{postsLoaded}}">
+        </core-ajax>
+        <style>
+        .progressbar {
+            background-color: rgb(213, 213, 213);
+            
+            height: 16px;
+            border-radius: 5px;
+        }
+        
+        .progressbar > div {
+            background-color: #4FAF2E;
+            width: 0%;
+            height: 16px;
+            float: left;
+            border-radius: 5px;
+        }
+        
+        .progressbar:nth-child(1) {
+            background-color: red;
+            width: 0%;
+            height: 10px;
+        }
+        
+        .ethernetup {
+            background: url(../image/eternet.jpg) no-repeat left top;
+            height: 50px;
+        }
+        
+        .internetprovidercss {
+            background: url(../image/ethernetup.png) no-repeat left top;
+            background-size: contain;
+            background-size: 66px;
+            height: 70px;
+            /* padding: 0px 170px 10px; */
+            font-size: 43px;
+            padding-left: 85px;
+            padding-top: 10px;
+        }
+        
+        .internetprovidercss2 {
+            background: url(../image/ethernetdown.png) no-repeat left top;
+            background-size: contain;
+            background-size: 66px;
+            height: 70px;
+            padding-top: 10px;
+            font-size: 43px;
+            padding-left: 85px;
+        }
+        
+        .internetprovidercss3 {
+            background: url(../image/ethernetstand.jpg) no-repeat left top;
+            background-size: contain;
+            background-size: 108px;
+            height: 70px;
+            padding-top: 17px;
+            font-size: 50px;
+            padding-left: 107px;
+        }
+        
+        .containerdiv {
+            max-width: 400px;
+            border-radius: 9px;
+            border: 1px solid #D8D8D8;
+            padding: 10px 10px 15px 10px;
+            margin: 0px auto;
+        }
+        
+        .dataused {
+            text-align: center;
+            clear: both;
+        }
+        
+        .pull-left {
+            float: left;
+        }
+        
+        .pull-right {
+            float: right;
+        }
+        
+        .clear-fix {
+            clear: both;
+        }
+        
+        .datee {
+            display: block;
+            text-align: center;
+            clear: both;
+        }
+        
+        .activeDatee {
+            float: left;
+        }
+        
+        .enddatee {
+            float: right;
+        }
+        
+        .sds {}
+        
+        .progressbarInner3 {
+            height: 16px;
+            border-radius: 5px;
+        }
+        
+        .pull-data-right {}
+        </style>
+        <div class="containerdiv">
+            <div id="internetprovider" class="internetprovidercss"></div>
+            <div id="progressbar" class="progressbar">
+                <div id="progressbarInner"></div>
+                <div id="progressbarInner2">
+                    <div id="progressbarInner3" class="progressbarInner3"></div>
+                </div>
+            </div>
+            <div class="dataused" id="dataused">
+                <span class="pull-left">0 MB</span>
+                <span id="usedDataDiv"></span>
+                <span id="datausunit"></span> Data Used
+                <span class="pull-right" id="maxdata">
+                <span ></span>
+                <span id="datamaxunit" class="pull-data-right"></span>
+                </span>
+                <span class="clear-fix"></span>
+            </div>
+            <br>
+            <div id="progressbar2" class="progressbar">
+                <div id="progressbarInner2"></div>
+            </div>
+            <div id="activeDate" class="datee">
+                <span id="activeDatee" class="activeDatee"></span>
+                <span id="sds" class="sds">Bill Cycle</span>
+                <span id="endDate" class="enddatee"></span>
+            </div>
+        </div>
+        <script type="text/javascript">
+        </script>
+    </template>
+    <script>
+    Polymer('q-wanstatus', {
+
+        domReady: function() {
+            if (this.ports) {
+
+                this.$.ajax.url = this.ports;
+            }
+            var respuesta = this.$.ajax;
+            path = this.ports;
+
+            respuesta.go();
+
+        },
+
+        postsLoaded: function(e, detail, sender) {
+
+            var pb = $(this.$.progressbar);
+            var pb2 = $(this.$.progressbar2);
+            var im = $(this.$.imagess);
+            var duu = $(this.$.dataused);
+            var du = $(this.$.dataused.children[1]);
+            var ip = $(this.$.internetprovider);
+            var md = $(this.$.dataused.children[3].children[0]);
+            var ad = $(this.$.activeDate.children[0]);
+            var ed = $(this.$.endDate);
+            var duut = $(this.$.datausunit);
+            var dmut = $(this.$.dataused.children[3].children[1]);
+
+            $.ajax({
+                dataType: "json",
+
+                url: this.ports,
+                success: function(data) {
+                    var variablecss = (data.currentUs / data.totalNet * 100);
+                    var variablecss2 = data.daysTaken / data.totalDays * 100;
+                    var variableimage = data.Isactive;
+                    var dataused = data.currentUs;
+                    var intpro = data.internetprovider;
+                    var maxdata = data.totalNet;
+                    var activeDate = data.activeDate;
+                    var endDate = data.endDate;
+                    var datausedunit = data.datausedunit;
+                    var datamaxxunit = data.datamaxunit;
+                    var IsUnlimited = data.IsUnlimited;
+
+
+
+                    $(du).context.innerHTML = dataused;
+                    $(md).context.innerHTML = maxdata;
+                    $(ip).context.innerHTML = intpro;
+                    $(ad).context.innerHTML = activeDate;
+                    $(ed).context.innerHTML = endDate;
+                    $(duut).context.innerHTML = datausedunit;
+                    $(dmut).context.innerHTML = datamaxxunit;
+
+                    if (variableimage == 1) {
+                        $(ip).context.className = 'internetprovidercss';
+                    } else if (variableimage == 2) {
+                        $(ip).context.className = 'internetprovidercss2';
+                    } else if (variableimage == 0) {
+
+                        $(ip).context.className = 'internetprovidercss3';
+                    }
+                    if (IsUnlimited == 0) {
+                        $(pb2.context.firstElementChild).css("width", variablecss2 + "%");
+                        if (variablecss < 75) {
+                            $(pb.context.firstElementChild).css("width", variablecss + "%");
+                        } else {
+                            $(pb.context.firstElementChild).css("width", variablecss + "%");
+
+                            $(pb.context.firstElementChild).css("background-color", "red");
+                        }
+                    } else if (IsUnlimited == 1) {
+
+                        datamaxxunit = 'Unlimited';
+                        $(md).context.innerHTML = maxdata;
+                        $(dmut).context.innerHTML = datamaxxunit;
+
+                        $(pb2.context.firstElementChild).css("width", variablecss2 + "%");
+                        if (variablecss < 75) {
+                            $(pb.context.firstElementChild).css("width", variablecss + "%");
+                        } else if (variablecss > 75) {
+
+                            variablecssnew = (variablecss - 75);
+
+                            variablecssdif = dataused - maxdata;
+                            if (variablecssdif < 0) {
+                                variablecssdif = (-1 * variablecssdif);
+                            }
+                            factor = Math.floor(variablecssdif / maxdata) + 1;
+                            calc = factor * maxdata;
+                            perc = ((variablecssdif / calc) * 100);
+
+                            $(pb.context.firstElementChild).css("width", 75 + "%");
+                            if (variablecssnew > 2) {
+                                $(pb.context.lastElementChild).css("width", 25 + "%");
+
+                                $(pb.context.lastElementChild).css("background-color", "transparent");
+
+                                $(pb.context.lastElementChild.firstElementChild).css("width", perc + "%");
+                                $(pb.context.lastElementChild.firstElementChild).css("background-color", "red");
+
+                            }
+
+
+                        }
+
+
+
+
+
+
+                    }
+
+                }
+            });
+        },
+    });
+    </script>
+   <script src="../js/jquery-1.10.2.js"></script>
+    <script src="../js/jquery-ui.js"></script>
+</polymer-element>
+<q-wanstatus></q-wanstatus>
